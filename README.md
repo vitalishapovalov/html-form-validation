@@ -78,7 +78,7 @@ var param1 = $('form');
  *
  * @type {Function|Object}
  */
-var param2 = function performedWhenFormIsValid (context) {
+var param2 = function (context) {
   console.log('%csuccess! Context:\n%o', 'color: blue;', context);
 
   // function should return Object with AJAX params.
@@ -110,6 +110,28 @@ var param3 = {
 
 /** Initialize Validator */
 new Validator(param1, param2, param3);
+```
+
+Ajax options function can perform async actions before returning ajax options object (only ES7 version).
+
+```javascript
+const param2 = context => {
+  // function should return Promise
+  return new Promise((resolve, reject) => {
+    // perform async actions. main ajax request will be performed on promise resolve
+    $.ajax({
+      url: 'path/to/async/action',
+      method: 'get',
+      // remember, function must return options for AJAX request
+      success: res => resolve({
+        url: 'path/to/main/ajax',
+        method: 'post',
+        success: res => console.log('main AJAX success %o', res)
+      }),
+      error: xhr => reject(xhr)
+    });
+  })
+};
 ```
 
 ## Options (form fields)
