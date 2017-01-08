@@ -439,8 +439,8 @@ export default class Validator {
   sendIfValidated (options = this.ajaxOptions) {
     const _this = this;
 
-    function callAjaxWithOptions() {
-      if (typeof options === 'function') options = options(_this);
+    async function callAjaxWithOptions() {
+      if (typeof options === 'function') options = await options(_this);
 
       $.ajax(options);
     }
