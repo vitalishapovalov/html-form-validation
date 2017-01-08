@@ -66,27 +66,35 @@ Validator module needs proper HTML-markup (more in example section)
 Initialize validator module
 
 ```javascript
-// First param. Form to validate. jQuery / HTMLElement / String (selector)
-var $form = $('form');
+/**
+ * First param. Form to validate.
+ *
+ * @type {jQuery|HTMLElement|String}
+ */
+var param1 = $('form');
 
-// Second param. Params for AJAX request performed when form is valid.
-// Object / Function (should return Object)
-function performedWhenFormIsValid (context) {
-  function onSuccess () {
-    console.log('performed on success');
-  }
+/**
+ * Second param. Params for AJAX request performed when form is valid.
+ *
+ * @type {Function|Object}
+ */
+var param2 = function performedWhenFormIsValid (context) {
+  console.log('%csuccess! Context:\n%o', 'color: blue;', context);
 
   // function should return Object with AJAX params.
   return {
-    url: './address/data.json',
-    method: 'GET',
-    data: context.serializedFormData(), // form-validation.js method to get form's data
-    success: onSuccess
+    url: 'ajax/example.json',
+    method: 'get',
+    success: () => console.log('ajax success callback')
   }
-}
+};
 
-// Third param. Options. Object. Unnecessary.
-var options = {
+/**
+ * Third param. User-specified options. Unnecessary.
+ *
+ * @type {Object}
+ */
+var param3 = {
   // If form is situated in bootstrap modal (login form etc.),
   // incorrect field state will be removed when modal is closed.
   // DEFAULT: false
@@ -100,8 +108,8 @@ var options = {
   removeOnFocusOut: true
 };
 
-// Initialize Validator.
-new Validator($form, performedWhenFormIsValid, options);
+/** Initialize Validator */
+new Validator(param1, param2, param3);
 ```
 
 ## Options (form fields)

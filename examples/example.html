@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>validator.js</title>
     <!--EXAMPLE CSS-->
-    <link href="css/index.min.css" rel="stylesheet">
+    <link href="assets/example.css" rel="stylesheet">
     <!--jQuery-->
-    <script src="js/jquery.min.js"></script>
+    <script src="assets/jquery.min.js"></script>
     <!--validator.js-->
     <script src="../src/js/validator.js"></script>
     <!--validator.css-->
     <link href="../src/css/validator.css" rel="stylesheet">
 </head>
 
-<body style="text-align: center;">
-    <div class="form-container" style="width: 300px; display: inline-block; padding: 40px 0; text-align: left;">
+<body>
+    <div class="form-container">
         <form class="form">
 
             <label class="form-input userEmail" data-validation="required" data-validation-type="email">
@@ -39,63 +39,42 @@
 
             <label class="form-input userRegion" data-validation="required" data-validation-type="select">
                 <span>Регион доставки</span>
-                <div class="select-box">
-                    <svg>
-                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="./img/svg-default.svg#icon-triangle"></use>
-                    </svg>
-                    <select name="userRegion">
-                        <option value="0" selected disabled>Регион доставки товара</option>
-                        <option value="1">Алматы</option>
-                        <option value="2">Актау</option>
-                        <option value="3">Актобе</option>
-                        <option value="4">Москва</option>
-                        <option value="5">Другой</option>
-                    </select>
-                </div>
+                <select name="userRegion">
+                    <option value="0" selected disabled>Регион доставки товара</option>
+                    <option value="1">Алматы</option>
+                    <option value="2">Актау</option>
+                    <option value="3">Актобе</option>
+                    <option value="4">Москва</option>
+                    <option value="5">Другой</option>
+                </select>
                 <div class="error"></div>
             </label>
 
-            <label style="height: 80px;" class="userPayment form-input" data-validation="required" data-validation-type="radio"
+            <label class="userPayment form-input" data-validation="required" data-validation-type="radio"
                    data-validation-text="Выберите способ оплаты">
                 <span>Способ оплаты</span>
-                <label class="radiobox-container">
-                    <label class="checkbox radiobox" style="height: 25px; margin-bottom: 0;">
-                        <input class="inline-middle" type="radio" name="userPayment" value="cashbox">
-                        <div class="checkbox-control">
-                            <svg>
-                                <use xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     xlink:href="./img/svg-default.svg#icon-check"></use>
-                            </svg>
-                            <span style="width: 200px; margin-left: 20px; margin-top: -12px; float: left;">На кассе - наличными</span>
-                        </div>
-                    </label>
-                    <label class="checkbox radiobox" style="height: 25px; margin-bottom: 0;">
-                        <input class="inline-middle" type="radio" name="userPayment" value="credit">
-                        <div class="checkbox-control">
-                            <svg>
-                                <use xmlns:xlink="http://www.w3.org/1999/xlink"
-                                     xlink:href="./img/svg-default.svg#icon-check"></use>
-                            </svg>
-                            <span style="width: 200px; margin-left: 20px; margin-top: -12px; float: left;">Оплатить онлайн</span>
-                        </div>
-                    </label>
-                    <div style="margin-top: 0;" class="error">Выберите способ оплаты</div>
+                <label>
+                    <input class="inline-middle" type="radio" name="userPayment" value="cashbox">
+                    Наличными на кассе
                 </label>
+                <label>
+                    <input class="inline-middle" type="radio" name="userPayment" value="credit">
+                    Кредитной картой
+                </label>
+                <div class="error"></div>
             </label>
 
-            <label style="margin-top: 5px;" class="form-input userCaptcha"
-                   data-validation="required" data-validation-type="text">
-                <span style="display: inline-block; margin-bottom: 10px;">Код проверки</span>
-                <img src="img/captcha.png">
-                <input style="float: right; width: calc(100% - 130px); vertical-align: top;"
-                       type="text" name="captcha" placeholder="Введите код проверки"
+            <label class="form-input userCaptcha" data-validation="required" data-validation-type="text">
+                <span>Код проверки</span>
+                <img src="assets/captcha.png">
+                <input type="text" name="captcha" placeholder="Введите код проверки"
                        data-validation-condition="equal" data-equal="zQSg2">
-                <div style="padding-left: 130px; margin-top: -5px;" class="error"></div>
+                <div class="error"></div>
             </label>
 
             <label class="form-input userMessage" data-validation="required" data-validation-type="text">
                 <span>Примечание</span>
-                <textarea placeholder="Отдать лично в руки" name="userMessage" style="resize: vertical; height: 150px;"
+                <textarea placeholder="Отдать лично в руки" name="userMessage"
                             data-validation-condition="length" data-min-length="50" data-max-length="200"></textarea>
                 <div class="error"></div>
             </label>
@@ -105,39 +84,50 @@
     </div>
     <!--Initialize Validator (example)-->
     <script>
-        // First param. Form to validate. jQuery / HTMLElement / String (selector)
-        var $form = $('form');
+      /**
+       * First param. Form to validate.
+       *
+       * @type {jQuery|HTMLElement|String}
+       */
+      var param1 = $('form');
 
-        // Second param. Params for AJAX request performed when form is valid.
-        // Object / Function (should return Object)
-        function performedWhenFormIsValid (context) {
-          var styles = 'color: red; font-size: large;';
+      /**
+       * Second param. Params for AJAX request performed when form is valid.
+       *
+       * @type {Function|Object}
+       */
+      var param2 = function performedWhenFormIsValid (context) {
+        console.log('%csuccess! Context:\n%o', 'color: blue;', context);
 
-          console.log('%csuccess!\n\nContext:\n%o', styles, context);
-
-          // function should return Object with AJAX params.
-          return {
-
-          }
+        // function should return Object with AJAX params.
+        return {
+          url: 'ajax/example.json',
+          method: 'get',
+          success: () => console.log('ajax success callback')
         }
+      };
 
-        // Third param. Options. Object. Unnecessary.
-        var options = {
-          // If form is situated in bootstrap modal (login form etc.),
-          // incorrect field state will be removed when modal is closed.
-          // DEFAULT: false
-          modal: false,
-          // Selector to find form's fields.
-          // When changing, you should also change CSS styles.
-          // DEFAULT: '.form-input'.
-          fieldsSelector: '.form-input',
-          // Remove fields incorrect state, when clicked outside the form.
-          // DEFAULT: false.
-          removeOnFocusOut: true
-        };
+      /**
+       * Third param. User-specified options. Unnecessary.
+       *
+       * @type {Object}
+       */
+      var param3 = {
+        // If form is situated in bootstrap modal (login form etc.),
+        // incorrect field state will be removed when modal is closed.
+        // DEFAULT: false
+        modal: false,
+        // Selector to find form's fields.
+        // When changing, you should also change CSS styles.
+        // DEFAULT: '.form-input'.
+        fieldsSelector: '.form-input',
+        // Remove fields incorrect state, when clicked outside the form.
+        // DEFAULT: false.
+        removeOnFocusOut: true
+      };
 
-        // Initialize Validator.
-        new Validator($form, performedWhenFormIsValid, options);
+      /** Initialize Validator */
+      new Validator(param1, param2, param3);
     </script>
 </body>
 </html>

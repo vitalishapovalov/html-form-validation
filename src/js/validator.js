@@ -29,7 +29,7 @@
    * @constructor
    *
    * @param {HTMLElement|jQuery} form - form to validate
-   * @param {Function} ajaxOptions - function that should return AJAX request options
+   * @param {Function|Object} ajaxOptions - function that should return AJAX request options
    * @param {Object} [options] - user specified options
    * @param {Boolean} [options.nestedInModal=false] - when true, remove fields incorrect state on modal hide
    * @param {String} [options.fieldsSelector='.form-input'] - form's field selector string
