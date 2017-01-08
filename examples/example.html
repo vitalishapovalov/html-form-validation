@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>validator.js</title>
+    <!--EXAMPLE CSS-->
+    <link href="css/index.min.css" rel="stylesheet">
+    <!--jQuery-->
+    <script src="js/jquery.min.js"></script>
+    <!--validator.js-->
+    <script src="../src/js/validator.js"></script>
+    <!--validator.css-->
+    <link href="../src/css/validator.css" rel="stylesheet">
+</head>
+
+<body style="text-align: center;">
+    <div class="form-container" style="width: 300px; display: inline-block; padding: 40px 0; text-align: left;">
+        <form class="form">
+
+            <label class="form-input userEmail" data-validation="required" data-validation-type="email">
+                <span>E-mail</span>
+                <input type="email" placeholder="Введите e-mail" name="userEmail">
+                <div class="error"></div>
+            </label>
+
+            <label class="form-input userName" data-validation="required" data-validation-type="text" data-validation-text="Введите корректное имя">
+                <span>Имя</span>
+                <input type="text" placeholder="Введите имя" name="userName" data-validation-condition="length" data-min-length="2">
+                <div class="error"></div>
+            </label>
+
+            <label class="form-input userPhone" data-validation="required" data-validation-type="phone">
+                <span>Телефон</span>
+                <input type="tel" placeholder="Введите номер телефона" name="userTel" data-validation-condition="length" data-length="18">
+                <div class="error"></div>
+            </label>
+
+            <label class="form-input userRegion" data-validation="required" data-validation-type="select">
+                <span>Регион доставки</span>
+                <div class="select-box">
+                    <svg>
+                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="./img/svg-default.svg#icon-triangle"></use>
+                    </svg>
+                    <select name="userRegion">
+                        <option value="0" selected disabled>Регион доставки товара</option>
+                        <option value="1">Алматы</option>
+                        <option value="2">Актау</option>
+                        <option value="3">Актобе</option>
+                        <option value="4">Москва</option>
+                        <option value="5">Другой</option>
+                    </select>
+                </div>
+                <div class="error"></div>
+            </label>
+
+            <label style="height: 80px;" class="userPayment form-input" data-validation="required" data-validation-type="radio"
+                   data-validation-text="Выберите способ оплаты">
+                <span>Способ оплаты</span>
+                <label class="radiobox-container">
+                    <label class="checkbox radiobox" style="height: 25px; margin-bottom: 0;">
+                        <input class="inline-middle" type="radio" name="userPayment" value="cashbox">
+                        <div class="checkbox-control">
+                            <svg>
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                     xlink:href="./img/svg-default.svg#icon-check"></use>
+                            </svg>
+                            <span style="width: 200px; margin-left: 20px; margin-top: -12px; float: left;">На кассе - наличными</span>
+                        </div>
+                    </label>
+                    <label class="checkbox radiobox" style="height: 25px; margin-bottom: 0;">
+                        <input class="inline-middle" type="radio" name="userPayment" value="credit">
+                        <div class="checkbox-control">
+                            <svg>
+                                <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                     xlink:href="./img/svg-default.svg#icon-check"></use>
+                            </svg>
+                            <span style="width: 200px; margin-left: 20px; margin-top: -12px; float: left;">Оплатить онлайн</span>
+                        </div>
+                    </label>
+                    <div style="margin-top: 0;" class="error">Выберите способ оплаты</div>
+                </label>
+            </label>
+
+            <label style="margin-top: 5px;" class="form-input userCaptcha"
+                   data-validation="required" data-validation-type="text">
+                <span style="display: inline-block; margin-bottom: 10px;">Код проверки</span>
+                <img src="img/captcha.png">
+                <input style="float: right; width: calc(100% - 130px); vertical-align: top;"
+                       type="text" name="captcha" placeholder="Введите код проверки"
+                       data-validation-condition="equal" data-equal="zQSg2">
+                <div style="padding-left: 130px; margin-top: -5px;" class="error"></div>
+            </label>
+
+            <label class="form-input userMessage" data-validation="required" data-validation-type="text">
+                <span>Примечание</span>
+                <textarea placeholder="Отдать лично в руки" name="userMessage" style="resize: vertical; height: 150px;"
+                            data-validation-condition="length" data-min-length="50" data-max-length="200"></textarea>
+                <div class="error"></div>
+            </label>
+
+            <button class="validate-form-button" type="submit">Оформить заказ</button>
+        </form>
+    </div>
+    <!--Initialize Validator (example)-->
+    <script>
+        // First param. Form to validate. jQuery / HTMLElement / String (selector)
+        var $form = $('form');
+
+        // Second param. Params for AJAX request performed when form is valid.
+        // Object / Function (should return Object)
+        function performedWhenFormIsValid (context) {
+          var styles = 'color: red; font-size: large;';
+
+          console.log('%csuccess!\n\nContext:\n%o', styles, context);
+
+          // function should return Object with AJAX params.
+          return {
+
+          }
+        }
+
+        // Third param. Options. Object. Unnecessary.
+        var options = {
+          // If form is situated in bootstrap modal (login form etc.),
+          // incorrect field state will be removed when modal is closed.
+          // DEFAULT: false
+          modal: false,
+          // Selector to find form's fields.
+          // When changing, you should also change CSS styles.
+          // DEFAULT: '.form-input'.
+          fieldsSelector: '.form-input',
+          // Remove fields incorrect state, when clicked outside the form.
+          // DEFAULT: false.
+          removeOnFocusOut: true
+        };
+
+        // Initialize Validator.
+        new Validator($form, performedWhenFormIsValid, options);
+    </script>
+</body>
+</html>

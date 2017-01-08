@@ -1,0 +1,9 @@
+{
+  "preset": "airbnb",
+  "maximumLineLength": null,
+  "requirePaddingNewLinesAfterBlocks": null,
+  "disallowMultipleVarDecl": null,
+  "disallowTrailingWhitespace": null,
+  "validateLineBreaks": null,
+  "requireTrailingComma": null
+}
