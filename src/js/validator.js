@@ -532,4 +532,12 @@
     window.Validator = Validator;
   }
 
+  /* expose Validator */
+  $.fn.validator = function (ajaxOptions, options) {
+    return this.each(function () {
+      var $this = $(this);
+      new Validator($this, ajaxOptions, options);
+    });
+  };
+
 })(jQuery);

@@ -163,6 +163,10 @@ const param2 = context => {
 | radio | At lease one radio should be selected. No additional options are available. | input[type="radio"] |
 | select | Checks for selected option. Its value should not equal **_0_** or **_false_**. No additional options are available. | select |
 
+## Requirement
+
+[jQuery 1.9.1+](http://jquery.com/)
+
 ## Tests (not ready yet)
 
 Run tests
@@ -173,7 +177,7 @@ npm run-script runTest
 
 ## Versioning
 
-Current version is 0.1.2
+Current version is 0.1.3
 
 ## Authors
 
