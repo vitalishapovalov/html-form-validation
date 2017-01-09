@@ -93,7 +93,9 @@ var param2 = function (context) {
   return {
     url: 'ajax/example.json',
     method: 'get',
-    success: () => console.log('ajax success callback')
+    success: function () {
+      console.log('ajax success callback')
+    }
   }
 };
 
