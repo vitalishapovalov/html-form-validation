@@ -121,8 +121,15 @@
    */
   Validator.prototype.ELEMENTS = function () {
     var _this = this;
+    var $form = _this.$form;
 
     return {
+      modal: function () {
+        return $form.parents('.modal');
+      },
+      button: function () {
+        return $form.find('.validate-form-button');
+      },
       inputs: function () {
         return _this.$form.find('input, textarea, select');
       },
@@ -130,26 +137,6 @@
         return _this.$form.find(_this.options.fieldsSelector);
       }
     };
-  };
-
-  /**
-   * 'Modal' DOM element (dynamically selected)
-   *
-   * @public
-   * @return {jQuery} modal
-   */
-  Validator.prototype.modal = function () {
-    return this.$form.parents('.modal');
-  };
-
-  /**
-   * 'Validation button' DOM element (dynamically selected)
-   *
-   * @public
-   * @return {jQuery} button
-   */
-  Validator.prototype.button = function () {
-    return this.$form.find('.validate-form-button');
   };
 
   /**
@@ -214,7 +201,7 @@
   Validator.prototype.removeIncorrectStateOnModalClose = function () {
     var _this = this;
 
-    _this.modal().on('hidden.bs.modal', function () {
+    _this.ELEMENTS().modal().on('hidden.bs.modal', function () {
       _this.removeIncorrectState();
     });
 
@@ -496,7 +483,7 @@
   Validator.prototype.bindOnClickValidation = function () {
     var _this = this;
 
-    _this.button().on('click.validation tap.validation', function (e) {
+    _this.ELEMENTS().button().on('click.validation tap.validation', function (e) {
       e.preventDefault();
 
       _this.runFormValidation();

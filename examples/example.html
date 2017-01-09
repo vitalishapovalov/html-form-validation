@@ -97,13 +97,15 @@
        * @type {Function|Object}
        */
       var param2 = function (context) {
-        console.log('%csuccess! context:\n%o', 'color: blue;', context);
+        console.log('%csuccess! context: %o', 'color: blue;', context);
 
         // function should return Object with AJAX params.
         return {
           url: 'ajax/example.json',
           method: 'get',
-          success: () => console.log('ajax success callback')
+          success: function () {
+            console.log('ajax success callback');
+          }
         }
       };
 

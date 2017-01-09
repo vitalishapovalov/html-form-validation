@@ -112,37 +112,6 @@ export default class Validator {
     };
 
     /**
-     * DOM elements (dynamically selected)
-     *
-     * @protected
-     */
-    this.ELEMENTS = () => {
-      const _this = this;
-      const $form = _this.$form;
-
-      return {
-        inputs: () => $form.find('input, textarea, select'),
-        fields: () => $form.find(_this.options.fieldsSelector)
-      };
-    };
-
-    /**
-     * 'Modal' DOM element (dynamically selected)
-     *
-     * @public
-     * @return {jQuery} modal
-     */
-    this.modal = () => this.$form.parents('.modal');
-
-    /**
-     * 'Validation button' DOM element (dynamically selected)
-     *
-     * @public
-     * @return {jQuery} button
-     */
-    this.button = () => this.$form.find('.validate-form-button');
-
-    /**
      * Buffer object
      *
      * @public
@@ -151,6 +120,23 @@ export default class Validator {
 
     /** Initialize */
     this.init();
+  }
+
+  /**
+   * DOM elements (dynamically selected)
+   *
+   * @protected
+   */
+  get ELEMENTS () {
+    const _this = this;
+    const $form = _this.$form;
+
+    return {
+      modal: () => $form.parents('.modal'),
+      button: () => $form.find('.validate-form-button'),
+      inputs: () => $form.find('input, textarea, select'),
+      fields: () => $form.find(_this.options.fieldsSelector)
+    };
   }
 
   /**
@@ -207,7 +193,7 @@ export default class Validator {
    * @return {Validator}
    */
   removeIncorrectStateOnModalClose () {
-    this.modal().on('hidden.bs.modal', () => this.removeIncorrectState());
+    this.ELEMENTS.modal().on('hidden.bs.modal', () => this.removeIncorrectState());
 
     return this;
   }
@@ -456,7 +442,7 @@ export default class Validator {
    * @return {Validator}
    */
   validateAllFields () {
-    this.ELEMENTS().fields().each((index, field) => {
+    this.ELEMENTS.fields().each((index, field) => {
       const $field = $(field);
       const requiredToValidate = $field.data('validation') === this.DEFAULTS.requiredToValidate;
 
@@ -485,7 +471,7 @@ export default class Validator {
    * @return {Validator}
    */
   bindOnClickValidation () {
-    this.button().on('click.validation tap.validation', (e) => {
+    this.ELEMENTS.button().on('click.validation tap.validation', (e) => {
       e.preventDefault();
 
       this.runFormValidation();
@@ -500,7 +486,7 @@ export default class Validator {
    * @return {Validator}
    */
   unbindOnClick () {
-    this.ELEMENTS().button().unbind('click.validation tap.validation');
+    this.ELEMENTS.button().unbind('click.validation tap.validation');
 
     return this;
   }
