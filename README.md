@@ -10,28 +10,36 @@ Install validator module
 npm i -save html-form-validation
 ```
 
-Add validator to your project
+Add validator to your project.
+
+AMD
 
 ```javascript
 require(['html-form-validation', function (Validator) {});
 ```
 
-or
+CommonJS
+
+```javascript
+var Validator = require('html-form-validation');
+```
+
+ES6
 
 ```javascript
 import Validator from 'html-form-validation';
 ```
 
-or
+Inline
 
 ```html
 <script src="html-form-validation.js"></script>
 ```
 
-Also, include CSS file (src/css/html-form-validation.css)
+Also, include CSS file (src/css/validator.css)
 
 ```html
-<link href="html-form-validation.css" rel="stylesheet">
+<link href="validator.css" rel="stylesheet">
 ```
 
 ## Usage
