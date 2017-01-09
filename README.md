@@ -10,7 +10,7 @@ Install validator module
 npm i -save html-form-validation
 ```
 
-Add validator to your project.
+Add validator to your project
 
 AMD
 
@@ -82,19 +82,19 @@ Initialize validator module
 var form = $('form');
 
 /**
- * Second param. Params for AJAX request performed when form is valid.
+ * Second param. Function performed after validation (if form is valid). Should return options for ajax request performed after.
  *
  * @type {Function|Object}
+ * @return {Object} options for ajax request
  */
-var ajaxOptions = function (context) {
-  console.log('%csuccess! Context:\n%o', 'color: blue;', context);
+var onSuccess = function (context) {
+  console.log('this code runs before ajax request');
 
-  // function should return Object with AJAX params.
   return {
     url: 'ajax/example.json',
     method: 'get',
     success: function () {
-      console.log('ajax success callback')
+      console.log('ajax success callback');
     }
   }
 };
@@ -115,20 +115,23 @@ var options = {
   fieldsSelector: '.form-input',
   // Remove fields incorrect state, when clicked outside the form.
   // DEFAULT: false.
-  removeOnFocusOut: true
+  removeOnFocusOut: false,
+  // Perform AJAX request with specified options if form is valid.
+  // DEFAULT: true.
+  ajax: true
 };
 
 /** Initialize Validator */
-new Validator(form, ajaxOptions, options);
+new Validator(form, onSuccess, options);
 
 /** Or initialize with jQuery */
-form.validator(ajaxOptions, options);
+form.validator(onSuccess, options);
 ```
 
-Ajax options function can perform async actions before returning ajax options object (only ES7 version).
+On success function can perform async actions before returning ajax options object (only ES7 version)
 
 ```javascript
-const param2 = context => {
+const onSuccess = context => {
   // function should return Promise
   return new Promise((resolve, reject) => {
     // perform async actions. main ajax request will be performed on promise resolve
@@ -139,7 +142,7 @@ const param2 = context => {
       success: res => resolve({
         url: 'path/to/main/ajax',
         method: 'post',
-        success: res => console.log('main AJAX success %o', res)
+        success: res => console.log(res)
       }),
       error: xhr => reject(xhr)
     });
@@ -180,7 +183,7 @@ npm run-script runTest
 
 ## Versioning
 
-Current version is 0.1.4
+Current version is 0.1.5
 
 ## Authors
 

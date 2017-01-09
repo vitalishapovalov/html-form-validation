@@ -29,11 +29,12 @@
    * @constructor
    *
    * @param {HTMLElement|jQuery} form - form to validate
-   * @param {Function|Object} ajaxOptions - function that should return AJAX request options
+   * @param {Function|Object} ajaxOptions - function performed after validation (if form is valid); should return options for ajax request performed after
    * @param {Object} [options] - user specified options
    * @param {Boolean} [options.nestedInModal=false] - when true, remove fields incorrect state on modal hide
    * @param {String} [options.fieldsSelector='.form-input'] - form's field selector string
    * @param {Boolean} [options.removeOnFocusOut=false] - when true, remove fields incorrect state when clicked outside the form
+   * @param {Boolean} [options.ajax=true] - when true, ajax request with specified options will be performed after successful validation
    */
   function Validator(form, ajaxOptions, options) {
 
@@ -65,7 +66,8 @@
     this.options = {
       modal: options.nestedInModal || false,
       fieldsSelector: options.fieldsSelector || '.form-input',
-      removeOnFocusOut: options.removeOnFocusOut || false
+      removeOnFocusOut: options.removeOnFocusOut || false,
+      ajax: options.ajax || true
     };
 
     /** Initialize */
@@ -433,13 +435,13 @@
 
     options = options || this.ajaxOptions;
 
-    function callAjaxWithOptions() {
+    function formIsValidCallback() {
       if (typeof options === 'function') options = options(_this);
 
-      $.ajax(options);
+      if (_this.options.ajax) $.ajax(options);
     }
 
-    if (this.formIsValid()) callAjaxWithOptions();
+    if (this.formIsValid()) formIsValidCallback();
 
     return this;
   };

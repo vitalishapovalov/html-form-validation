@@ -92,14 +92,14 @@
       var form = $('form');
 
       /**
-       * Second param. Params for AJAX request performed when form is valid.
+       * Second param. Function performed after validation (if form is valid). Should return options for ajax request performed after.
        *
        * @type {Function|Object}
+       * @return {Object} options for ajax request
        */
-      var ajaxOptions = function (context) {
+      var onSuccess = function (context) {
         console.log('%csuccess! context: %o', 'color: blue;', context);
 
-        // function should return Object with AJAX params.
         return {
           url: 'ajax/example.json',
           method: 'get',
@@ -125,14 +125,17 @@
         fieldsSelector: '.form-input',
         // Remove fields incorrect state, when clicked outside the form.
         // DEFAULT: false.
-        removeOnFocusOut: true
+        removeOnFocusOut: false,
+        // Perform AJAX request with specified options if form is valid.
+        // DEFAULT: true.
+        ajax: true
       };
 
       /** Initialize Validator */
-      new Validator(form, ajaxOptions, options);
+      new Validator(form, onSuccess, options);
 
       /** Or with jQuery */
-      form.validator(ajaxOptions, options);
+      //form.validator(onSuccess, options);
     </script>
 </body>
 </html>
