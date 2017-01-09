@@ -79,14 +79,14 @@ Initialize validator module
  *
  * @type {jQuery|HTMLElement|String}
  */
-var param1 = $('form');
+var form = $('form');
 
 /**
  * Second param. Params for AJAX request performed when form is valid.
  *
  * @type {Function|Object}
  */
-var param2 = function (context) {
+var ajaxOptions = function (context) {
   console.log('%csuccess! Context:\n%o', 'color: blue;', context);
 
   // function should return Object with AJAX params.
@@ -104,7 +104,7 @@ var param2 = function (context) {
  *
  * @type {Object}
  */
-var param3 = {
+var options = {
   // If form is situated in bootstrap modal (login form etc.),
   // incorrect field state will be removed when modal is closed.
   // DEFAULT: false
@@ -119,7 +119,10 @@ var param3 = {
 };
 
 /** Initialize Validator */
-new Validator(param1, param2, param3);
+new Validator(form, ajaxOptions, options);
+
+/** Or initialize with jQuery */
+form.validator(ajaxOptions, options);
 ```
 
 Ajax options function can perform async actions before returning ajax options object (only ES7 version).
@@ -177,7 +180,7 @@ npm run-script runTest
 
 ## Versioning
 
-Current version is 0.1.3
+Current version is 0.1.4
 
 ## Authors
 

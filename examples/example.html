@@ -89,14 +89,14 @@
        *
        * @type {jQuery|HTMLElement|String}
        */
-      var param1 = $('form');
+      var form = $('form');
 
       /**
        * Second param. Params for AJAX request performed when form is valid.
        *
        * @type {Function|Object}
        */
-      var param2 = function (context) {
+      var ajaxOptions = function (context) {
         console.log('%csuccess! context: %o', 'color: blue;', context);
 
         // function should return Object with AJAX params.
@@ -114,7 +114,7 @@
        *
        * @type {Object}
        */
-      var param3 = {
+      var options = {
         // If form is situated in bootstrap modal (login form etc.),
         // incorrect field state will be removed when modal is closed.
         // DEFAULT: false
@@ -129,10 +129,10 @@
       };
 
       /** Initialize Validator */
-      new Validator(param1, param2, param3);
+      new Validator(form, ajaxOptions, options);
 
       /** Or with jQuery */
-      $('form').validator(param2, param3);
+      form.validator(ajaxOptions, options);
     </script>
 </body>
 </html>
