@@ -15,7 +15,7 @@ Add validator to your project
 AMD
 
 ```javascript
-require(['html-form-validation', function (Validator) {});
+require(['html-form-validation'], function (Validator) {});
 ```
 
 CommonJS
@@ -36,7 +36,7 @@ Inline
 <script src="html-form-validation.js"></script>
 ```
 
-Also, include CSS file (src/css/validator.css)
+Also, include CSS file
 
 ```html
 <link href="validator.css" rel="stylesheet">
@@ -82,17 +82,20 @@ Initialize validator module
 var form = $('form');
 
 /**
- * Second param. Function performed after validation (if form is valid). Should return options for ajax request performed after.
+ * Second param. Function performed after validation (if the form is valid).
+ * Should return options for ajax request performed after.
  *
  * @type {Function|Object}
  * @return {Object} options for ajax request
  */
 var onSuccess = function (context) {
-  console.log('this code runs before ajax request');
+  //this code runs before ajax request
+  var data = getDataFunc();
 
   return {
     url: 'ajax/example.json',
     method: 'get',
+    data: data,
     success: function () {
       console.log('ajax success callback');
     }
@@ -105,18 +108,18 @@ var onSuccess = function (context) {
  * @type {Object}
  */
 var options = {
-  // If form is situated in bootstrap modal (login form etc.),
-  // incorrect field state will be removed when modal is closed.
+  // If the form is situated in bootstrap's modal (e.g. login form),
+  // incorrect state will be removed from fields when modal is closed.
   // DEFAULT: false
   modal: false,
-  // Selector to find form's fields.
-  // When changing, you should also change CSS styles.
+  // Form fields selector.
+  // When changing this, you should also change CSS styles.
   // DEFAULT: '.form-input'.
   fieldsSelector: '.form-input',
   // Remove fields incorrect state, when clicked outside the form.
   // DEFAULT: false.
   removeOnFocusOut: false,
-  // Perform AJAX request with specified options if form is valid.
+  // Perform AJAX request with specified options (if the form is valid).
   // DEFAULT: true.
   ajax: true
 };
@@ -128,20 +131,21 @@ new Validator(form, onSuccess, options);
 form.validator(onSuccess, options);
 ```
 
-On success function can perform async actions before returning ajax options object (only ES7 version)
+On success function can perform async actions before returning ajax options object (only ES6 version)
 
 ```javascript
 const onSuccess = context => {
   // function should return Promise
   return new Promise((resolve, reject) => {
-    // perform async actions. main ajax request will be performed on promise resolve
+    // perform async actions. main ajax request will be performed when promise resolve
     $.ajax({
       url: 'path/to/async/action',
       method: 'get',
       // remember, function must return options for AJAX request
-      success: res => resolve({
+      success: data => resolve({
         url: 'path/to/main/ajax',
         method: 'post',
+        data,
         success: res => console.log(res)
       }),
       error: xhr => reject(xhr)
@@ -183,7 +187,7 @@ npm run-script runTest
 
 ## Versioning
 
-Current version is 0.1.5
+Current version is 0.1.51
 
 ## Authors
 

@@ -1,6 +1,6 @@
 /**
  * @name form-validation.js
- * @version 0.1
+ * @version 0.1.51
  * @author Vitali Shapovalov
  * @fileoverview
  * This module is to validate HTML forms.

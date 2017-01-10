@@ -1,6 +1,6 @@
 {
   "name": "html-form-validation",
-  "version": "0.1.5",
+  "version": "0.1.51",
   "description": "A library to validate HTML forms",
   "main": "src/js/validator.js",
   "dependencies": {
@@ -13,7 +13,7 @@
     "example": "examples"
   },
   "scripts": {
-    "docs": "jsdoc ./dist -d docs -c jsdoc.json",
+    "docs": "jsdoc ./src/js/validator.js -d docs -c jsdoc.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

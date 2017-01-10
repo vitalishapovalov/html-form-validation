@@ -92,7 +92,8 @@
       var form = $('form');
 
       /**
-       * Second param. Function performed after validation (if form is valid). Should return options for ajax request performed after.
+       * Second param. Function performed after validation (if the form is valid).
+       * Should return options for ajax request performed after.
        *
        * @type {Function|Object}
        * @return {Object} options for ajax request
@@ -115,12 +116,12 @@
        * @type {Object}
        */
       var options = {
-        // If form is situated in bootstrap modal (login form etc.),
+        // If the form is situated in bootstrap's modal (e.g. login form),
         // incorrect field state will be removed when modal is closed.
         // DEFAULT: false
         modal: false,
-        // Selector to find form's fields.
-        // When changing, you should also change CSS styles.
+        // Form fields selector.
+        // When changing this, you should also change CSS styles.
         // DEFAULT: '.form-input'.
         fieldsSelector: '.form-input',
         // Remove fields incorrect state, when clicked outside the form.
