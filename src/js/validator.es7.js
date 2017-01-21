@@ -2,7 +2,7 @@
 
 /**
  * @name validator.js
- * @version 0.1.51
+ * @version 0.1.6
  * @author Vitali Shapovalov
  * @fileoverview
  * This module is to validate HTML forms.
@@ -23,7 +23,10 @@
  * limitations under the License.
  */
 
-/** Validator module */
+/** Validator module
+ *
+ * @TODO: alphabet / numeric characters, rebuild data-attr logic, refactor lang, afterChange validation
+ * */
 export default class Validator {
 
   /**
@@ -36,6 +39,7 @@ export default class Validator {
    * @param {String} [options.fieldsSelector='.form-input'] - form's field selector string
    * @param {Boolean} [options.removeOnFocusOut=false] - when true, remove fields incorrect state when clicked outside the form
    * @param {Boolean} [options.ajax=true] - when true, ajax request with specified options will be performed after successful validation
+   * @param {String} [options.lang='en'] - error messages language (ru/en)
    */
   constructor(form = $(), ajaxOptions = {}, options = {}) {
 
@@ -65,7 +69,8 @@ export default class Validator {
       modal: options.nestedInModal || false,
       fieldsSelector: options.fieldsSelector || '.form-input',
       removeOnFocusOut: options.removeOnFocusOut || false,
-      ajax: options.ajax || true
+      ajax: options.ajax || true,
+      lang: options.lang || 'en'
     };
 
     /**
@@ -82,12 +87,6 @@ export default class Validator {
       // CLASS NAMES
       incorrect: 'incorrect',
       formIsValid: 'validated',
-
-      // ERROR MESSAGES TEXT
-      emptyField: 'Заполните поле',
-      incorrectPhone: 'Введите корректный номер',
-      incorrectEmail: 'Введите корректный Email',
-      incorrectSelect: 'Выберите один из вариантов',
 
       // 'data-' TYPES
       dataType: 'validation-type',
@@ -111,6 +110,45 @@ export default class Validator {
 
       // 'data-validation=' VALUE TYPES
       requiredToValidate: 'required'
+    };
+
+    /**
+     * Ru and En languages support.
+     *
+     * @type {Object}
+     * @public
+     */
+    this.lang = {
+      ru: {
+        emptyField: 'Заполните поле',
+        incorrectPhone: 'Введите корректный номер',
+        incorrectEmail: 'Введите корректный Email',
+        incorrectSelect: 'Выберите один из вариантов',
+        symbols: 'символов',
+        reqFieldLength: 'Необходимая длинна поля - ',
+        maxFieldLength: 'Максимальная длинна поля - ',
+        minFieldLength: 'Минимальная длинна поля - ',
+        minMaxFieldLength: {
+          first: 'Кол-во символов должно быть не более ',
+          second: ' и не менее '
+        },
+        notEqual: 'Значение поля не совпало с ожидаемым'
+      },
+      en: {
+        emptyField: 'Fill in the field, please',
+        incorrectPhone: 'Please, enter a valid number',
+        incorrectEmail: 'Please, enter a valid email',
+        incorrectSelect: 'Please, select an option',
+        symbol: 'symbols',
+        reqFieldLength: 'Required field length is - ',
+        maxFieldLength: 'Maximum field length is - ',
+        minFieldLength: 'Minimum field length is - ',
+        minMaxFieldLength: {
+          first: 'Number of characters should be less than ',
+          second: ' but not less than '
+        },
+        notEqual: 'The field value did not match with the expected value'
+      }
     };
 
     /**
@@ -243,7 +281,7 @@ export default class Validator {
     if (dataText && dataText.length) errorText = dataText;
 
     if (!valueLength) {
-      this.throwError(field, DEFAULTS.emptyField);
+      this.throwError(field, this.lang[this.options.lang].emptyField);
     } else if (!condition) {
       this.throwError(field, errorText);
     } else {
@@ -258,11 +296,12 @@ export default class Validator {
    */
   validateField (field) {
     const DEFAULTS = this.DEFAULTS;
+    const lang = this.lang[this.options.lang];
     const type = field.data(DEFAULTS.dataType);
 
     let fieldParams = {
       condition: true,
-      errorText: DEFAULTS.emptyField,
+      errorText: lang.emptyField,
       length: 1
     };
 
@@ -276,14 +315,14 @@ export default class Validator {
       // data-validation-type="phone"
       case DEFAULTS.phoneType: {
         fieldParams = this.validateTextField(field);
-        fieldParams.errorText = DEFAULTS.incorrectPhone;
+        fieldParams.errorText = lang.incorrectPhone;
         break;
       }
 
       // data-validation-type="email"
       case DEFAULTS.emailType: {
         fieldParams = this.validateEmailField(field);
-        fieldParams.errorText = DEFAULTS.incorrectEmail;
+        fieldParams.errorText = lang.incorrectEmail;
         break;
       }
 
@@ -296,7 +335,7 @@ export default class Validator {
       // data-validation-type="select"
       case DEFAULTS.selectType: {
         fieldParams = this.validateSelectField(field);
-        fieldParams.errorText = DEFAULTS.incorrectSelect;
+        fieldParams.errorText = lang.incorrectSelect;
         break;
       }
     }
@@ -312,6 +351,7 @@ export default class Validator {
    */
   validateTextField (field) {
     const DEFAULTS = this.DEFAULTS;
+    const lang = this.lang[this.options.lang];
     const input = field.find('input').length ? field.find('input') : field.find('textarea');
     const value = input.val();
     const valueLength = value.length;
@@ -328,7 +368,7 @@ export default class Validator {
 
         if (length) {
           condition = valueLength === parseInt(length, 10);
-          errorText = 'Необходимая длинна поля - ' + length + ' символов';
+          errorText = lang.reqFieldLength + length + lang.symbols;
           break;
         }
 
@@ -337,13 +377,13 @@ export default class Validator {
 
         if (maxLength && minLength) {
           condition = maxLengthCondition && minLengthCondition;
-          errorText = 'Кол-во символов должно быть не более ' + maxLength + ' и не менее ' + minLength;
+          errorText = lang.minMaxFieldLength.first + maxLength + lang.minMaxFieldLength.second + minLength;
         } else if (maxLength) {
           condition = maxLengthCondition;
-          errorText = 'Максимальная длинна поля - ' + maxLength + ' символов';
+          errorText = `${lang.maxFieldLength}${maxLength} ${lang.symbols}`;
         } else if (minLength) {
           condition = minLengthCondition;
-          errorText = 'Минимальная длинна поля - ' + minLength + ' символов';
+          errorText = `${lang.minFieldLength}${minLength} ${lang.symbols}`;
         }
 
         break;
@@ -354,7 +394,7 @@ export default class Validator {
         const neededValue = input.data(DEFAULTS.equal);
 
         condition = value === neededValue;
-        errorText = 'Значение поля не совпало с ожидаемым';
+        errorText = lang.notEqual;
 
         break;
       }

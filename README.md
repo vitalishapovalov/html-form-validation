@@ -121,7 +121,10 @@ var options = {
   removeOnFocusOut: false,
   // Perform AJAX request with specified options (if the form is valid).
   // DEFAULT: true.
-  ajax: true
+  ajax: true,
+  // Language support. (en/ru)
+  // DEFAULT: 'en'
+  lang: 'en'
 };
 
 /** Initialize Validator */
@@ -187,7 +190,7 @@ npm run-script runTest
 
 ## Versioning
 
-Current version is 0.1.51
+Current version is 0.1.6
 
 ## Authors
 

@@ -1,14 +1,13 @@
 {
   "name": "html-form-validation",
-  "version": "0.1.51",
+  "version": "0.1.6",
   "description": "A library to validate HTML forms",
   "main": "src/js/validator.js",
   "dependencies": {
+    "docdash": "^0.4.0",
     "jquery": "^3.1.1"
   },
-  "devDependencies": {
-
-  },
+  "devDependencies": {},
   "directories": {
     "example": "examples"
   },
