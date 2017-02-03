@@ -66,10 +66,10 @@ export default class Validator {
      * @public
      */
     this.options = {
-      modal: options.nestedInModal || false,
+      modal: typeof options.nestedInModal === 'boolean' ? options.nestedInModal : false,
       fieldsSelector: options.fieldsSelector || '.form-input',
-      removeOnFocusOut: options.removeOnFocusOut || false,
-      ajax: options.ajax || true,
+      removeOnFocusOut: typeof options.removeOnFocusOut === 'boolean' ? options.removeOnFocusOut : false,
+      ajax: typeof options.ajax === 'boolean' ? options.ajax : true,
       lang: options.lang || 'en'
     };
 
