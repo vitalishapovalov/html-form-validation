@@ -190,7 +190,7 @@ npm run-script runTest
 
 ## Versioning
 
-Current version is 0.1.6
+Current version is 0.1.61
 
 ## Authors
 
