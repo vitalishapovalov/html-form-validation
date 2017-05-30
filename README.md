@@ -1,13 +1,33 @@
 # Validator
 
-This module is to validate HTML forms. Text fields, emails, phones, checkobxes etc.
+This module is to validate HTML forms. Text fields, emails, phones, checkobxes etc. Check out [demo](https://vitalishapovalov.github.io/html-form-validation/).
+
+## Overview
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [Options (html)](#options-(html))
+    1. [Form fields](#form-fields)
+    2. [Field types](#field-types)
+* [Options (js)](#options-(js))
+* [Methods](#methods)
+    1. [Instance method](#instance-method)
+    2. [Static methods](#static-methods)
+* [Requirement](#requirement)
+* [Versioning](#versioning)
 
 ## Installation
 
 Install validator module
 
 ```
-npm i -save html-form-validation
+npm i -S html-form-validation
+```
+
+or with yarn
+
+```
+yarn add html-form-validation
 ```
 
 Add validator to your project
@@ -44,120 +64,63 @@ Also, include CSS file
 
 ## Usage
 
+### Markup
+
 Validator module needs proper HTML-markup (more in example section)
 
 ```html
 <form>
-  <!--Email field-->
+  <!-- Email field -->
   <label class="form-input" data-validation="required" data-validation-type="email">
     <input type="email">
     <div class="error"></div>
   </label>
 
-  <!--Text field. With min and max length (can be only 'min' or only 'max')-->
+  <!-- Text field. With min and max length -->
   <label class="form-input" data-validation="required" data-validation-type="text">
     <textarea data-validation-condition="length" data-min-length="50" data-max-length="200"></textarea>
     <div class="error"></div>
   </label>
 
-  <!--Text field. With custom error message, 'equal' codition-->
+  <!-- Text field. With custom error message, 'equal' codition -->
   <label class="form-input" data-validation="required" data-validation-type="text" data-validation-text="Incorrect data">
     <input type="text" data-validation-condition="equal" data-equal="dataToCompare">
     <div class="error"></div>
   </label>
 
-  <!--Validate form button-->
+  <!-- Validate form button -->
   <button class="validate-form-button" type="submit">Validate form</button>
 </form>
 ```
 
-Initialize validator module
+### Default initialization
 
 ```javascript
-/**
- * First param. Form to validate.
- *
- * @type {jQuery|HTMLElement|String}
- */
-var form = $('form');
+// initialize
+$('form').validator();
 
-/**
- * Second param. Function performed after validation (if the form is valid).
- * Should return options for ajax request performed after.
- *
- * @type {Function|Object}
- * @return {Object} options for ajax request
- */
-var onSuccess = function (context) {
-  //this code runs before ajax request
-  var data = getDataFunc();
-
-  return {
-    url: 'ajax/example.json',
-    method: 'get',
-    data: data,
-    success: function () {
-      console.log('ajax success callback');
-    }
-  }
-};
-
-/**
- * Third param. User-specified options. Unnecessary.
- *
- * @type {Object}
- */
-var options = {
-  // If the form is situated in bootstrap's modal (e.g. login form),
-  // incorrect state will be removed from fields when modal is closed.
-  // DEFAULT: false
-  modal: false,
-  // Form fields selector.
-  // When changing this, you should also change CSS styles.
-  // DEFAULT: '.form-input'.
-  fieldsSelector: '.form-input',
-  // Remove fields incorrect state, when clicked outside the form.
-  // DEFAULT: false.
-  removeOnFocusOut: false,
-  // Perform AJAX request with specified options (if the form is valid).
-  // DEFAULT: true.
-  ajax: true,
-  // Language support. (en/ru)
-  // DEFAULT: 'en'
-  lang: 'en'
-};
-
-/** Initialize Validator */
-new Validator(form, onSuccess, options);
-
-/** Or initialize with jQuery */
-form.validator(onSuccess, options);
+// initialize with options
+$('form').validator({
+  removeErrorOnFocusOut: true
+});
 ```
 
-On success function can perform async actions before returning ajax options object (only ES6 version)
+### Initialization with webpack
 
 ```javascript
-const onSuccess = context => {
-  // function should return Promise
-  return new Promise((resolve, reject) => {
-    // perform async actions. main ajax request will be performed when promise resolve
-    $.ajax({
-      url: 'path/to/async/action',
-      method: 'get',
-      // remember, function must return options for AJAX request
-      success: data => resolve({
-        url: 'path/to/main/ajax',
-        method: 'post',
-        data,
-        success: res => console.log(res)
-      }),
-      error: xhr => reject(xhr)
-    });
-  })
-};
+// import validator
+import Validator from 'html-form-validation';
+
+// fix jQuery conflict
+Validator.expose($);
+
+// use it
+$('form').validator();
 ```
 
-## Options (form fields)
+## Options (html)
+
+### Form fields
 
 | Option name     | Possible values | Description |
 | --------------- |:-------------:| :-----|
@@ -165,7 +128,7 @@ const onSuccess = context => {
 | data-validation-type | **text** / **phone** / **email** / **checkbox** / **radio** / **select** | Which method used to validate field. Each type has its own. |
 | data-validation-text | **any string** | Text used as error message. Otherwise validator will use its own messages for every field type. |
 
-## Field types
+### Field types
 
 | Type | Description | Available input types |
 | --- | ----- | ---- |
@@ -176,22 +139,119 @@ const onSuccess = context => {
 | radio | At lease one radio should be selected. No additional options are available. | input[type="radio"] |
 | select | Checks for selected option. Its value should not equal **_0_** or **_false_**. No additional options are available. | select |
 
+## Options (js)
+
+### ajax
+
+Type: `Object`
+
+Default: `{}`
+
+AJAX options. If set - request will be performed after validation (if form is valid).
+
+### lang
+
+Type: `String`
+
+Default: `en`
+
+Error text language (en/ru).
+
+### removeErrorOnFocusOut
+
+Type: `Boolean`
+
+Default: `false`
+
+When true, remove fields incorrect state when clicked outside the form.
+
+### fieldsSelector
+
+Type: `String`
+
+Default: `'.form-input'`
+
+Form fields selector string.
+
+### beforeValidation
+
+Type: `Function`
+
+Default: `null`
+
+Parameter: `validator`
+
+Example:
+```javascript
+$('form').validator({
+  beforeValidation: function (validator) {
+    console.log('performed before validation');
+  }
+});
+```
+
+Callback performed before form validation.
+
+### afterValidation
+
+Type: `Function`
+
+Default: `null`
+
+Parameter: `validator`
+
+Callback performed after form validation.
+
+### onValid
+
+Type: `Function`
+
+Default: `null`
+
+Parameter: `validator`
+
+Callback performed after validation, if form is valid (before AJAX).
+
+## Methods
+
+### Instance method
+
+```javascript
+// initialize and get access to validator's instance
+// (if inited on multiple jQuery objects returns an array of instances)
+var validatorInstance = $('form').validator();
+
+// run form validation
+validatorInstance.runFormValidation();
+
+// reset form
+validatorInstance.resetForm();
+
+// get serialized data
+var formData = validatorInstance.serializedFormData();
+
+// unbind validation from button
+validatorInstance.unbindOnClick();
+```
+
+### Static methods
+
+```javascript
+/**
+ * Expose validator module as jquery plugin.
+ * Use before initialazing validator.
+ * (fixes jquery conflict when using webpack's "import")
+ *
+ * @static
+ * @param {jQuery} jQuery
+ */
+ Validator.expose($);
+```
+
 ## Requirement
 
 [jQuery 1.9.1+](http://jquery.com/)
 
-## Tests (not ready yet)
-
-Run tests
-
-```
-npm run-script runTest
-```
-
 ## Versioning
 
-Current version is 0.1.61
-
-## Authors
-
-* **Shapovalov Vitali**
+Current version is 0.2.1

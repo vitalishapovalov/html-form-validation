@@ -1,8 +1,9 @@
 /**
  * @name form-validation.js
- * @version 0.1.6
+ * @version 0.2.1
  * @author Vitali Shapovalov
  * @fileoverview
+ *
  * This module is to validate HTML forms.
  * Text fields, emails, phones, checkobxes etc.
  */
@@ -31,18 +32,20 @@
    * @constructor
    *
    * @param {HTMLElement|jQuery} form - form to validate
-   * @param {Function|Object} ajaxOptions - function performed after validation (if form is valid); should return options for ajax request performed after
    * @param {Object} [options] - user specified options
-   * @param {Boolean} [options.nestedInModal=false] - when true, remove fields incorrect state on modal hide
+   *
    * @param {String} [options.fieldsSelector='.form-input'] - form's field selector string
-   * @param {Boolean} [options.removeOnFocusOut=false] - when true, remove fields incorrect state when clicked outside the form
-   * @param {Boolean} [options.ajax=true] - when true, ajax request with specified options will be performed after successful validation
    * @param {String} [options.lang='en'] - error messages language (ru/en)
+   * @param {Boolean} [options.modal=false] - when true, remove fields incorrect state on modal hide
+   * @param {Boolean} [options.removeErrorOnFocusOut=false] - when true, remove fields incorrect state when clicked outside the form
+   * @param {Object} [options.ajax={}] - options for ajax request performed if form is valid
+   * @param {Function} [options.beforeValidation] - function performed before form validation
+   * @param {Function} [options.afterValidation] - function performed after form validation
+   * @param {Function} [options.onValid] - function performed if form is valid (before AJAX)
+   *
+   * @return {Validator}
    */
-  function Validator(form, ajaxOptions, options) {
-
-    ajaxOptions = ajaxOptions || {};
-    options = options || {};
+  function Validator(form, options) {
 
     /**
      * Form to validate
@@ -53,26 +56,21 @@
     this.$form = $(form);
 
     /**
-     * User-specified AJAX options
-     *
-     * @type {Function|Object}
-     * @public
-     */
-    this.ajaxOptions = ajaxOptions;
-
-    /**
-     * User-specified options
+     * Defaults extended with user-specified options
      *
      * @type {Object}
      * @public
      */
-    this.options = {
-      modal: typeof options.nestedInModal === 'boolean' ? options.nestedInModal : false,
-      fieldsSelector: options.fieldsSelector || '.form-input',
-      removeOnFocusOut: typeof options.removeOnFocusOut === 'boolean' ? options.removeOnFocusOut : false,
-      ajax: typeof options.ajax === 'boolean' ? options.ajax : true,
-      lang: options.lang || 'en'
-    };
+    this.options = $.extend(true, {
+      modal: false,
+      fieldsSelector: '.form-input',
+      removeErrorOnFocusOut: false,
+      ajax: {},
+      lang: 'en',
+      beforeValidation: null,
+      afterValidation: null,
+      onValid: null
+    }, options);
 
     /**
      * Ru and En languages support.
@@ -113,8 +111,11 @@
       }
     };
 
-    /** Initialize */
+    // initialize after construction
     this.init();
+
+    // return validator instance
+    return this;
   }
 
   /**
@@ -154,36 +155,21 @@
   };
 
   /**
-   * DOM elements (dynamically selected)
+   * Check existence and run callback.
    *
-   * @protected
+   * @param {*} callback
+   * @returns {Validator}
    */
-  Validator.prototype.ELEMENTS = function () {
-    var _this = this;
-    var $form = _this.$form;
+  Validator.prototype.checkAndRunCallback = function (callback) {
+    if (typeof callback === 'function') {
+      callback(this);
 
-    return {
-      modal: function () {
-        return $form.parents('.modal');
-      },
-      button: function () {
-        return $form.find('.validate-form-button');
-      },
-      inputs: function () {
-        return _this.$form.find('input, textarea, select');
-      },
-      fields: function () {
-        return _this.$form.find(_this.options.fieldsSelector);
-      }
-    };
+    } else if (callback != undefined) {
+      console.warn('Callback should be a function.')
+    }
+
+    return this;
   };
-
-  /**
-   * Buffer object
-   *
-   * @public
-   */
-  Validator.prototype.buffer = {};
 
   /**
    * Check form for validness
@@ -215,8 +201,9 @@
    * @return {Validator}
    */
   Validator.prototype.removeIncorrectState = function () {
-    this.$form
-      .find(this.options.fieldsSelector).removeClass(DEFAULTS.incorrect);
+    var $formFields = this.$form.find(this.options.fieldsSelector);
+
+    $formFields.removeClass(DEFAULTS.incorrect);
 
     return this;
   };
@@ -227,7 +214,9 @@
    * @return {Validator}
    */
   Validator.prototype.resetForm = function () {
-    this.$form[0].reset();
+    var form = this.$form[0];
+
+    form.reset();
 
     return this;
   };
@@ -239,8 +228,14 @@
    */
   Validator.prototype.removeIncorrectStateOnModalClose = function () {
     var _this = this;
+    var $modal = _this.$form.parents('.modal');
 
-    _this.ELEMENTS().modal().on('hidden.bs.modal', function () {
+    if (!$modal.length) {
+      console.warn('No modal was found');
+      return this;
+    }
+
+    $modal.on('hidden.bs.modal', function () {
       _this.removeIncorrectState();
     });
 
@@ -267,12 +262,14 @@
   /**
    * Set incorrect state on field
    *
-   * @param {jQuery} field
+   * @param {jQuery} $field
    * @param {String} errorText - displayed error text
    */
-  Validator.prototype.throwError = function (field, errorText) {
-    field.addClass(DEFAULTS.incorrect)
-      .find(DEFAULTS.error).text(errorText);
+  Validator.prototype.throwError = function ($field, errorText) {
+    var $error = $field.find(DEFAULTS.error);
+
+    $field.addClass(DEFAULTS.incorrect);
+    $error.text(errorText);
   };
 
   /**
@@ -290,9 +287,11 @@
     if (dataText && dataText.length) errorText = dataText;
 
     if (!valueLength) {
-      this.throwError(field, this.lang[this.options.lang].emptyField);
+      this.throwError(field, lang.emptyField);
+
     } else if (!condition) {
       this.throwError(field, errorText);
+
     } else {
       this.$form.addClass(DEFAULTS.formIsValid);
     }
@@ -383,10 +382,13 @@
 
         if (maxLength && minLength) {
           condition = maxLengthCondition && minLengthCondition;
-          errorText = lang.minMaxFieldLength.first + maxLength + lang.minMaxFieldLength.second + minLength;
+          errorText = lang.minMaxFieldLength.first + maxLength
+            + lang.minMaxFieldLength.second + minLength;
+
         } else if (maxLength) {
           condition = maxLengthCondition;
           errorText = lang.maxFieldLength + maxLength + ' ' + lang.symbols;
+
         } else if (minLength) {
           condition = minLengthCondition;
           errorText = lang.minFieldLength + minLength + ' ' + lang.symbols;
@@ -465,23 +467,33 @@
   };
 
   /**
-   * Send data if form is valid
+   * Send data if form is valid (perform ajax if options are passed)
    *
-   * @param {Object|Function} options - ajax options
+   * @param {Object} ajaxOptions - ajax options
    * @return {Validator}
    */
-  Validator.prototype.sendIfValidated = function (options) {
+  Validator.prototype.sendIfValidated = function (ajaxOptions) {
     var _this = this;
+    var options = _this.options;
 
-    options = options || this.ajaxOptions;
+    ajaxOptions = ajaxOptions || options.ajax;
 
     function formIsValidCallback() {
-      if (typeof options === 'function') options = options(_this);
+      // 'onValid' callback
+      _this.checkAndRunCallback(options.onValid);
 
-      if (_this.options.ajax) $.ajax(options);
+      // ajax (if set)
+      if (ajaxOptions) $.ajax(ajaxOptions);
     }
 
+    // 'beforeValidation' callback
+    _this.checkAndRunCallback(options.beforeValidation);
+
+    // run validation
     if (this.formIsValid()) formIsValidCallback();
+
+    // 'afterValidation' callback
+    _this.checkAndRunCallback(options.afterValidation);
 
     return this;
   };
@@ -493,8 +505,9 @@
    */
   Validator.prototype.validateAllFields = function () {
     var _this = this;
+    var $formFields = _this.$form.find(_this.options.fieldsSelector);
 
-    _this.ELEMENTS().fields().each(function (index, field) {
+    $formFields.each(function (index, field) {
       var $field = $(field);
       var requiredToValidate = $field.data('validation') === DEFAULTS.requiredToValidate;
 
@@ -510,11 +523,10 @@
    * @return {Validator}
    */
   Validator.prototype.runFormValidation = function () {
-    this.removeIncorrectState()
+    return this
+      .removeIncorrectState()
       .validateAllFields()
       .sendIfValidated();
-
-    return this;
   };
 
   /**
@@ -524,8 +536,9 @@
    */
   Validator.prototype.bindOnClickValidation = function () {
     var _this = this;
+    var $button = _this.$form.find('.validate-form-button');
 
-    _this.ELEMENTS().button().on('click.validation tap.validation', function (e) {
+    $button.on('click.validation tap.validation', function (e) {
       e.preventDefault();
 
       _this.runFormValidation();
@@ -540,7 +553,9 @@
    * @return {Validator}
    */
   Validator.prototype.unbindOnClick = function () {
-    this.ELEMENTS().button().unbind('click.validation tap.validation');
+    var $button = this.$form.find('.validate-form-button');
+
+    $button.unbind('click.validation tap.validation');
 
     return this;
   };
@@ -557,29 +572,52 @@
     if (this.options.modal) this.removeIncorrectStateOnModalClose();
 
     // 'removeOnFocusOut' is true
-    if (this.options.removeOnFocusOut) this.removeIncorrectStateOnFocusOut();
+    if (this.options.removeErrorOnFocusOut) this.removeIncorrectStateOnFocusOut();
 
     return this;
   };
 
-  /* expose Validator */
+  /**
+   * Expose popup module as jquery plugin.
+   * (jquery-webpack conflict fix)
+   *
+   * @static
+   * @param {jQuery} jQuery
+   */
+  var exposeValidator = Validator.expose = function (newJquery) {
+    // refresh jquery itself
+    $ = newJquery;
+
+    // refresh jquery plugin
+    $.fn.validator = function (options) {
+      var instances = [];
+
+      this.each(function () {
+        var $this = $(this);
+        instances.push(new Validator($this, options));
+      });
+
+      return instances.length === 1 ? instances[0] : instances;
+    };
+  };
+
+  /**
+   * Expose Validator module.
+   */
   if (typeof module === 'object' && typeof module.exports === 'object') {
     // CommonJS, just export
     module.exports = Validator;
   } else if (typeof define === 'function' && define.amd) {
     // AMD support
-    define('Validator', function () { return Validator; });
+    define('vintage-popup', function () { return Validator; });
   } else {
     // Global
     window.Validator = Validator;
   }
 
-  /* expose Validator */
-  $.fn.validator = function (ajaxOptions, options) {
-    return this.each(function () {
-      var $this = $(this);
-      new Validator($this, ajaxOptions, options);
-    });
-  };
+  /**
+   * Expose Validator module.
+   */
+  exposeValidator($);
 
-})(jQuery);
+})(jQuery || window.jQuery || window.$);

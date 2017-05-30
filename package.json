@@ -1,19 +1,22 @@
 {
   "name": "html-form-validation",
-  "version": "0.1.61",
+  "version": "0.2.1",
   "description": "A library to validate HTML forms",
-  "main": "src/js/validator.js",
+  "main": "dist/validator.min.js",
   "dependencies": {
-    "docdash": "^0.4.0",
-    "jquery": "^3.1.1"
+    "jquery": "^1.9.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-clean-css": "^2.0.8",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.0.0"
+  },
   "directories": {
     "example": "examples"
   },
   "scripts": {
-    "docs": "jsdoc ./src/js/validator.js -d docs -c jsdoc.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "gulp default"
   },
   "repository": {
     "url": "git+https://github.com/vitalishapovalov/html-form-validation",
@@ -28,7 +31,7 @@
     "javascript",
     "js"
   ],
-  "author": "Vitali Shapovalov",
+  "author": "Vitali Shapovalov <shapovalov.vitali.v@gmail.com>",
   "license": "Apache-2.0",
   "homepage": "https://github.com/vitalishapovalov/html-form-validation"
 }

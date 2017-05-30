@@ -2,41 +2,51 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>validator.js</title>
-    <!--EXAMPLE CSS-->
-    <link href="assets/example.css" rel="stylesheet">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Html form validation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta content="telephone=no" name="format-detection">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="theme-color" content="#bbb5b5">
+    <link rel="icon" href="example/favicon.png">
+
     <!--jQuery-->
-    <script src="assets/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
     <!--validator.js-->
-    <script src="../src/js/validator.js"></script>
+    <script src="dist/validator.min.js"></script>
     <!--validator.css-->
-    <link href="../src/css/validator.css" rel="stylesheet">
+    <link href="dist/validator.min.css" rel="stylesheet">
+    <!--EXAMPLE CSS-->
+    <link href="example/assets/example.css" rel="stylesheet">
 </head>
 
 <body>
     <div class="form-container">
         <form class="form">
-
+            <!-- email field -->
             <label class="form-input userEmail" data-validation="required" data-validation-type="email">
                 <span>E-mail</span>
                 <input type="email" placeholder="Введите e-mail" name="userEmail">
                 <div class="error"></div>
             </label>
 
+            <!-- text field -->
             <label class="form-input userName" data-validation="required" data-validation-type="text" data-validation-text="Введите корректное имя">
                 <span>Имя</span>
                 <input type="text" placeholder="Введите имя" name="userName" data-validation-condition="length" data-min-length="2">
                 <div class="error"></div>
             </label>
 
+            <!-- phone field (not finished yet) -->
             <label class="form-input userPhone" data-validation="required" data-validation-type="phone">
                 <span>Телефон</span>
-                <input type="tel" placeholder="Введите номер телефона" name="userTel" data-validation-condition="length" data-length="18">
+                <input type="tel" placeholder="Введите номер телефона" name="userTel" data-validation-condition="length" data-min-length="10">
                 <div class="error"></div>
             </label>
 
+            <!-- select -->
             <label class="form-input userRegion" data-validation="required" data-validation-type="select">
                 <span>Регион доставки</span>
                 <select name="userRegion">
@@ -50,6 +60,7 @@
                 <div class="error"></div>
             </label>
 
+            <!-- radio button -->
             <label class="userPayment form-input" data-validation="required" data-validation-type="radio"
                    data-validation-text="Выберите способ оплаты">
                 <span>Способ оплаты</span>
@@ -64,14 +75,16 @@
                 <div class="error"></div>
             </label>
 
+            <!-- captcha -->
             <label class="form-input userCaptcha" data-validation="required" data-validation-type="text">
                 <span>Код проверки</span>
-                <img src="assets/captcha.png">
+                <img src="example/assets/captcha.png">
                 <input type="text" name="captcha" placeholder="Введите код проверки"
                        data-validation-condition="equal" data-equal="zQSg2">
                 <div class="error"></div>
             </label>
 
+            <!-- text field -->
             <label class="form-input userMessage" data-validation="required" data-validation-type="text">
                 <span>Примечание</span>
                 <textarea placeholder="Отдать лично в руки" name="userMessage"
@@ -83,63 +96,6 @@
         </form>
     </div>
     <!--Initialize Validator (example)-->
-    <script>
-      /**
-       * First param. Form to validate.
-       *
-       * @type {jQuery|HTMLElement|String}
-       */
-      var form = $('form');
-
-      /**
-       * Second param. Function performed after validation (if the form is valid).
-       * Should return options for ajax request performed after.
-       *
-       * @type {Function|Object}
-       * @return {Object} options for ajax request
-       */
-      var onSuccess = function (context) {
-        console.log('%csuccess! context: %o', 'color: blue;', context);
-
-        return {
-          url: 'ajax/example.json',
-          method: 'get',
-          success: function () {
-            console.log('ajax success callback');
-          }
-        }
-      };
-
-      /**
-       * Third param. User-specified options. Unnecessary.
-       *
-       * @type {Object}
-       */
-      var options = {
-        // If the form is situated in bootstrap's modal (e.g. login form),
-        // incorrect field state will be removed when modal is closed.
-        // DEFAULT: false
-        modal: false,
-        // Form fields selector.
-        // When changing this, you should also change CSS styles.
-        // DEFAULT: '.form-input'.
-        fieldsSelector: '.form-input',
-        // Remove fields incorrect state, when clicked outside the form.
-        // DEFAULT: false.
-        removeOnFocusOut: false,
-        // Perform AJAX request with specified options if form is valid.
-        // DEFAULT: true.
-        ajax: true,
-        // Language support. (en/ru)
-        // DEFAULT: 'en'
-        lang: 'en'
-      };
-
-      /** Initialize Validator */
-      new Validator(form, onSuccess, options);
-
-      /** Or with jQuery */
-      //form.validator(onSuccess, options);
-    </script>
+    <script>$('form').validator();</script>
 </body>
 </html>
