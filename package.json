@@ -1,7 +1,7 @@
 {
   "name": "html-form-validation",
-  "version": "0.2.1",
-  "description": "A library to validate HTML forms",
+  "version": "0.2.2",
+  "description": "HTML forms validation plugin",
   "main": "dist/validator.min.js",
   "dependencies": {
     "jquery": "^1.9.1"

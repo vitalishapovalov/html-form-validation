@@ -1,11 +1,11 @@
 {
   "name": "html-form-validation",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "homepage": "https://github.com/vitalishapovalov/html-form-validation",
   "authors": [
     "Vitali Shapovalov <shapovalov.vitali.v@gmail.com>"
   ],
-  "description": "A library to validate HTML forms",
+  "description": "HTML forms validation plugin",
   "main": "src/js/validator.js",
   "dependencies": {
     "jquery": "~3.1.1"

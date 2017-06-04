@@ -16,6 +16,7 @@ This module is to validate HTML forms. Text fields, emails, phones, checkobxes e
 * [Methods](#methods)
     * [Instance method](#instance-method)
     * [Static methods](#static-methods)
+* [TODO](#todo)
 * [Requirement](#requirement)
 * [Versioning](#versioning)
 
@@ -251,10 +252,18 @@ validatorInstance.unbindOnClick();
  Validator.expose($);
 ```
 
+## TODO
+
+* Alphabet / numeric characters validation
+* Correct phone number validation
+* Simplify data-attr logic
+* Refactor errors text / languages
+* Add 'afterChange' validation
+
 ## Requirement
 
 [jQuery 1.9.1+](http://jquery.com/)
 
 ## Versioning
 
-Current version is 0.2.1
+Current version is 0.2.2
