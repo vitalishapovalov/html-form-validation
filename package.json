@@ -4,7 +4,7 @@
   "description": "HTML forms validation plugin",
   "main": "dist/validator.min.js",
   "dependencies": {
-    "jquery": "^1.9.1"
+    "jquery": "^3.0.0"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
