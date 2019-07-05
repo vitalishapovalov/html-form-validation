@@ -1,5 +1,9 @@
 # Validator
 
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
+NO LONGER MAINTEINED
+
 This module is to validate HTML forms. Text fields, emails, phones, checkobxes etc. Check out [demo](https://vitalishapovalov.github.io/html-form-validation/).
 
 ## Overview
@@ -251,14 +255,6 @@ validatorInstance.unbindOnClick();
  */
  Validator.expose($);
 ```
-
-## TODO
-
-* Alphabet / numeric characters validation
-* Correct phone number validation
-* Simplify data-attr logic
-* Refactor errors text / languages
-* Add 'afterChange' validation
 
 ## Requirement
 
